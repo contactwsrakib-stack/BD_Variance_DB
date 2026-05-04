@@ -84,21 +84,21 @@ function DrillTooltip({
           return (
             <div key={i}>
               <p className="text-xs font-medium text-foreground leading-snug">
-                {p.Project_Name}
+                {p.Project_Name || p["Project Name"] || "—"}
               </p>
               <p className="text-xs font-bold text-blue-300 mt-0.5">
                 {formatBDT(val)}
               </p>
-              {p.Additional_Note && (
+              {(p.Additional_Note || p["Additional Note"]) && (
                 <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                  {p.Additional_Note}
+                  {p.Additional_Note || p["Additional Note"]}
                 </p>
               )}
-              {p.Red_Flag && (
+              {(p.Red_Flag || p["Red Flag"]) && (
                 <div className="flex items-start gap-1 mt-1">
                   <AlertTriangle className="w-3 h-3 text-red-400 flex-shrink-0 mt-0.5" />
                   <p className="text-xs text-red-400 leading-relaxed">
-                    {p.Red_Flag}
+                    {p.Red_Flag || p["Red Flag"]}
                   </p>
                 </div>
               )}

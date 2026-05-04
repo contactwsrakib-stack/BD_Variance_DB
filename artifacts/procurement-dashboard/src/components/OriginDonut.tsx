@@ -23,14 +23,10 @@ function getOriginValue(row: ProcurementRow): string {
   return "Unknown";
 }
 
-function getRevisedValue(row: ProcurementRow): number {
-  for (const key of Object.keys(row)) {
-    const norm = key.toLowerCase().replace(/[\s_-]/g, "");
-    if (norm === "revisedvaluebdt" || norm === "revisedvalue") {
-      return parseValue(row[key]);
-    }
-  }
-  return parseValue(row.Revised_Value_BDT);
+function getEffectiveValue(row: ProcurementRow): number {
+  const revised = parseValue(row.Revised_Value_BDT);
+  if (revised > 0) return revised;
+  return parseValue(row.Original_Value_BDT);
 }
 
 const PALETTE = ["#3b82f6", "#22c55e", "#f59e0b", "#8b5cf6", "#ec4899", "#06b6d4"];
@@ -109,7 +105,7 @@ export default function OriginDonut({ data }: Props) {
       const origin = getOriginValue(row);
       if (!map[origin]) map[origin] = { count: 0, totalBDT: 0 };
       map[origin].count += 1;
-      map[origin].totalBDT += getRevisedValue(row);
+      map[origin].totalBDT += getEffectiveValue(row);
     });
     const total = Object.values(map).reduce((s, v) => s + v.count, 0);
     return Object.entries(map)

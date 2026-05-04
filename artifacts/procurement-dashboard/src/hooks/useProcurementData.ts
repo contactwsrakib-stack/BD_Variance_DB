@@ -10,7 +10,7 @@ export interface ProcurementRow {
   Revision_Year: string;
   Additional_Note: string;
   Red_Flag: string;
-  "Found in EGP Portal?": string;
+  "Found_in_EGP_Portal?": string;
   Contractor: string;
   Source_APA_Reference: string;
   [key: string]: string;
@@ -19,6 +19,20 @@ export interface ProcurementRow {
 const CSV_URL =
   "https://docs.google.com/spreadsheets/d/1znaGclNLDettAV0K5PtGhurccZ_fsiN3/export?format=csv";
 
+/** Normalize a CSV column header: replace spaces with underscores */
+function normalizeKey(key: string): string {
+  return key.replace(/ /g, "_");
+}
+
+/** Remap every row's keys so spaces become underscores */
+function normalizeRow(raw: Record<string, string>): ProcurementRow {
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(raw)) {
+    out[normalizeKey(k)] = v;
+  }
+  return out as ProcurementRow;
+}
+
 export function useProcurementData() {
   const [data, setData] = useState<ProcurementRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,12 +40,16 @@ export function useProcurementData() {
 
   useEffect(() => {
     setLoading(true);
-    Papa.parse<ProcurementRow>(CSV_URL, {
+    Papa.parse<Record<string, string>>(CSV_URL, {
       download: true,
       header: true,
       skipEmptyLines: true,
       complete: (results) => {
-        setData(results.data);
+        // Filter out summary/totals rows (rows with no Project_Name)
+        const clean = results.data
+          .map(normalizeRow)
+          .filter((r) => r.Project_Name?.trim() !== "");
+        setData(clean);
         setLoading(false);
       },
       error: (err) => {
@@ -47,7 +65,6 @@ export function useProcurementData() {
 /** Strip commas and parse BDT numeric string to float */
 export function parseValue(val: string): number {
   if (!val) return 0;
-  // Remove commas, currency symbols, spaces, then parse
   const cleaned = val.replace(/,/g, "").replace(/[^0-9.]/g, "");
   return parseFloat(cleaned) || 0;
 }

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { ProcurementRow, parseValue, formatBDT } from "../hooks/useProcurementData";
-import { TrendingUp, DollarSign, EyeOff } from "lucide-react";
+import { TrendingUp, DollarSign, Crown } from "lucide-react";
 
 interface Props {
   data: ProcurementRow[];
@@ -17,18 +17,19 @@ export default function KpiCards({ data }: Props) {
     [data]
   );
 
-  const opaqueCount = useMemo(
-    () =>
-      data.filter(
-        (row) => row["Found in EGP Portal?"]?.trim().toLowerCase() === "no"
-      ).length,
-    [data]
-  );
-
   const overrunPct =
     totalOriginal > 0
       ? (((totalRevised - totalOriginal) / totalOriginal) * 100).toFixed(1)
       : "0";
+
+  const megaProject = useMemo(() => {
+    if (!data.length) return null;
+    return data.reduce((best, row) => {
+      return parseValue(row.Revised_Value_BDT) > parseValue(best.Revised_Value_BDT)
+        ? row
+        : best;
+    }, data[0]);
+  }, [data]);
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
@@ -73,23 +74,51 @@ export default function KpiCards({ data }: Props) {
         </div>
       </div>
 
-      {/* Opaque Contracts */}
+      {/* Largest Single Mega-Project */}
       <div className="rounded-xl border border-amber-500/20 bg-card p-6 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent pointer-events-none" />
         <div className="flex items-start justify-between mb-3">
           <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-            Opaque Contracts
+            Largest Mega-Project
           </p>
           <div className="w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center flex-shrink-0">
-            <EyeOff className="w-4 h-4 text-amber-400" />
+            <Crown className="w-4 h-4 text-amber-400" />
           </div>
         </div>
-        <p className="text-3xl font-bold text-amber-400 leading-tight">
-          {opaqueCount}
-        </p>
-        <p className="text-xs text-muted-foreground mt-2">
-          Projects absent from EGP / citizen portals
-        </p>
+
+        {megaProject ? (
+          <>
+            <p className="text-sm font-bold text-foreground leading-snug line-clamp-2 mb-3">
+              {megaProject.Project_Name || "—"}
+            </p>
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground w-16 flex-shrink-0">Original</span>
+                <span className="text-xs font-semibold text-blue-400">
+                  {formatBDT(parseValue(megaProject.Original_Value_BDT))}
+                </span>
+                {megaProject.Original_Award_Year && (
+                  <span className="text-xs text-muted-foreground">
+                    in {megaProject.Original_Award_Year}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground w-16 flex-shrink-0">Revised</span>
+                <span className="text-xs font-bold text-amber-400">
+                  {formatBDT(parseValue(megaProject.Revised_Value_BDT))}
+                </span>
+                {megaProject.Revision_Year && (
+                  <span className="text-xs text-muted-foreground">
+                    in {megaProject.Revision_Year}
+                  </span>
+                )}
+              </div>
+            </div>
+          </>
+        ) : (
+          <p className="text-sm text-muted-foreground">No data available</p>
+        )}
       </div>
     </div>
   );
