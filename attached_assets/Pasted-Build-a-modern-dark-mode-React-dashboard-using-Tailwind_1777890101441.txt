@@ -1,0 +1,32 @@
+Build a modern, dark-mode React dashboard using Tailwind CSS, Recharts, and PapaParse to visualize public procurement anomalies.
+
+CRITICAL ARCHITECTURE RULE: Do NOT hardcode any JSON data into the source files. You must dynamically fetch and parse the data on component mount using PapaParse from this live CSV export link:
+https://docs.google.com/spreadsheets/d/1znaGclNLDettAV0K5PtGhurccZ_fsiN3/export?format=csv
+
+Dashboard Layout & Requirements:
+
+Top KPI Cards: >    - 'Total Original Spend' (Sum of Original_Value_BDT). Format as Tk Lakh Cr or Billions.
+
+'Total Revised Spend' (Sum of Revised_Value_BDT).
+
+'Contractor Origin Split': A simple pie or donut chart showing the percentage breakdown of Contractor_Origin (Foreign vs. Local vs. JV).
+
+Middle Section: Dual Line Chart (With Deep-Drill Hover): >    - Create a combined line chart using Recharts. X-Axis is the Year.
+
+Line 1 (Blue/Safe color): Plot Original_Value_BDT against Original_Award_Year.
+
+Line 2 (Red/Danger color): Plot Revised_Value_BDT against Revision_Year.
+
+DEEP DRILL TOOLTIP: Build a custom Recharts <Tooltip />. When a user hovers over a year/spike, it must act as a 'deep drill'. The tooltip should list the specific Project_Name(s) making up that data point, their individual values, and the exact text from the Additional Note or Red_Flag columns. Users must be able to instantly see WHICH projects are driving the spikes.
+
+The 'Black Box' Table (Opaque Mega-Projects):
+
+Create a distinct table (red-accented or high contrast) titled 'Mega-Projects Missing from EGP/Citizen Portals'.
+
+Filtering: This table MUST strictly filter the fetched data to ONLY display rows where the Found in EGP Portal? column exactly equals 'No'. Show the Project Name, Revised Value BDT, Contractor, and Source_APA_Reference.
+
+Master Database Table:
+
+At the bottom of the page, include a clean, searchable, paginated data table displaying all columns for all rows fetched from the CSV. Make the Source references clickable links.
+
+Make the UI look sleek, professional, and optimized for interactive data journalism."
