@@ -26,7 +26,7 @@ export default function BlackBoxTable({ data }: Props) {
           </div>
           <div>
             <h2 className="text-sm font-bold text-red-400 leading-snug">
-              Targeted Transparency Audit (Sample Size: {missing.length} Mega-Projects)
+              Targeted Transparency Audit (Sample Size: {missing.length} contracts)
             </h2>
             <p className="text-xs text-red-400/70 mt-1.5 italic leading-relaxed">
               Methodology Note: This table highlights a targeted sample of high-value mega-projects manually audited for public visibility. None of these contracts were accessible via the public EGP or Citizen portals.
@@ -48,7 +48,10 @@ export default function BlackBoxTable({ data }: Props) {
                   Project Name
                 </th>
                 <th className="text-right px-6 py-3 text-xs font-semibold uppercase tracking-widest text-red-400/80">
-                  Revised Value
+                  Original Value BDT
+                </th>
+                <th className="text-right px-6 py-3 text-xs font-semibold uppercase tracking-widest text-red-400/80">
+                  Revised Value BDT
                 </th>
                 <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-widest text-red-400/80">
                   Contractor
@@ -60,7 +63,8 @@ export default function BlackBoxTable({ data }: Props) {
             </thead>
             <tbody>
               {missing.map((row, i) => {
-                const val = parseValue(row.Revised_Value_BDT);
+                const origVal = parseValue(row.Original_Value_BDT);
+                const revVal = parseValue(row.Revised_Value_BDT);
                 const isUrl =
                   row.Source_APA_Reference?.startsWith("http://") ||
                   row.Source_APA_Reference?.startsWith("https://");
@@ -86,8 +90,13 @@ export default function BlackBoxTable({ data }: Props) {
                       )}
                     </td>
                     <td className="px-6 py-4 text-right">
+                      <span className="text-sm tabular-nums text-blue-400">
+                        {origVal > 0 ? formatBDT(origVal) : "—"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
                       <span className="font-bold text-red-400 tabular-nums">
-                        {val > 0 ? formatBDT(val) : "—"}
+                        {revVal > 0 ? formatBDT(revVal) : "—"}
                       </span>
                     </td>
                     <td className="px-6 py-4">
