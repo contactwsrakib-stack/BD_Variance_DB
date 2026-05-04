@@ -1,0 +1,41 @@
+Build a modern, dark-mode React dashboard using Tailwind CSS, Recharts, and PapaParse to visualize public procurement anomalies.
+
+CRITICAL DATA FETCHING RULE: Dynamically fetch the data on load from this exact CSV link:
+https://docs.google.com/spreadsheets/d/1znaGclNLDettAV0K5PtGhurccZ_fsiN3/export?format=csv
+CRITICAL PARSING RULE: The BDT value columns (Original_Value_BDT and Revised_Value_BDT) contain commas. You MUST strip the commas and parse them as floats/numbers before calculating the sums. The total Original BDT should sum to roughly 6,788,447,650,000 and Revised to 8,410,067,000,000.
+
+Dashboard Layout & Requirements:
+
+Top KPI Cards: >    - 'Total Original Spend' (Format the massive numbers cleanly, e.g., in Trillions or Billions BDT).
+
+'Total Revised Spend' (Highlight the massive growth).
+
+'Opaque Contracts' (Count of rows where Found in EGP Portal? == 'No').
+
+Contractor Origin Split (Donut Chart):
+
+Create a Donut Chart for Contractor_Origin (Foreign vs Local vs JV).
+
+Visually display the Percentage (%) directly on the chart slices.
+
+Hover State: When the user hovers over a slice, the tooltip MUST show the exact numerical total BDT for that category and the count of contracts.
+
+Middle Section: Spending Trajectories (Two Bar Charts to avoid flatlines):
+
+Chart A (Original Awards): A Bar Chart plotting Original_Value_BDT against Original_Award_Year. ONLY show years that exist in the data (categorical X-axis) to avoid empty flatlines.
+
+Chart B (Revisions): A Bar Chart plotting Revised_Value_BDT against Revision_Year. ONLY show years where a revision occurred.
+
+Deep Drill Tooltip: For BOTH charts, build a custom tooltip. When hovering over a bar, list the specific Project_Name(s) in that year, their values, and the exact text from the Additional Note or Red_Flag columns to explain the spikes.
+
+The 'Black Box' Table (Opaque Mega-Projects):
+
+Create a distinct, red-accented table titled 'Mega-Projects Missing from EGP/Citizen Portals'.
+
+Strictly filter to ONLY display rows where Found in EGP Portal? exactly equals 'No'. Show Project Name, Revised Value, Contractor, and Source Link.
+
+Master Database Table:
+
+Include a paginated data table at the bottom with all fetched rows. Make the 'Source_APA_Reference' clickable URLs.
+
+Ensure the UI is sleek, responsive, and handles the massive numeric values elegantly."

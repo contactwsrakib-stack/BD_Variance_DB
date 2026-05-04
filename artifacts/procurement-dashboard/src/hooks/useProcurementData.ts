@@ -44,17 +44,25 @@ export function useProcurementData() {
   return { data, loading, error };
 }
 
+/** Strip commas and parse BDT numeric string to float */
 export function parseValue(val: string): number {
   if (!val) return 0;
-  const cleaned = val.replace(/[^0-9.]/g, "");
+  // Remove commas, currency symbols, spaces, then parse
+  const cleaned = val.replace(/,/g, "").replace(/[^0-9.]/g, "");
   return parseFloat(cleaned) || 0;
 }
 
 export function formatBDT(value: number): string {
   if (value >= 1e12) return `Tk ${(value / 1e12).toFixed(2)} Trillion`;
-  if (value >= 1e11) return `Tk ${(value / 1e7).toFixed(2)} Cr`;
   if (value >= 1e9) return `Tk ${(value / 1e9).toFixed(2)} Billion`;
   if (value >= 1e7) return `Tk ${(value / 1e7).toFixed(2)} Cr`;
   if (value >= 1e5) return `Tk ${(value / 1e5).toFixed(2)} Lakh`;
   return `Tk ${value.toLocaleString()}`;
+}
+
+export function formatBDTShort(value: number): string {
+  if (value >= 1e12) return `${(value / 1e12).toFixed(2)}T`;
+  if (value >= 1e9) return `${(value / 1e9).toFixed(1)}B`;
+  if (value >= 1e7) return `${(value / 1e7).toFixed(1)}Cr`;
+  return `${(value / 1e5).toFixed(0)}L`;
 }

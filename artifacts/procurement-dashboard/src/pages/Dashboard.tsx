@@ -1,6 +1,7 @@
 import { useProcurementData } from "../hooks/useProcurementData";
 import KpiCards from "../components/KpiCards";
-import SpendLineChart from "../components/SpendLineChart";
+import OriginDonut from "../components/OriginDonut";
+import SpendBarCharts from "../components/SpendBarCharts";
 import BlackBoxTable from "../components/BlackBoxTable";
 import MasterTable from "../components/MasterTable";
 import { Loader2, AlertCircle, Activity } from "lucide-react";
@@ -73,25 +74,32 @@ export default function Dashboard() {
 
       {/* Main content */}
       <main className="max-w-7xl mx-auto px-6 py-8 flex flex-col gap-8">
-        {/* KPI Cards */}
+
+        {/* Row 1: KPI Cards */}
         <section>
           <KpiCards data={data} />
         </section>
 
-        {/* Dual Line Chart */}
+        {/* Row 2: Contractor Origin Donut */}
         <section>
-          <SpendLineChart data={data} />
+          <OriginDonut data={data} />
         </section>
 
-        {/* Black Box Table */}
+        {/* Row 3: Dual Bar Charts */}
+        <section>
+          <SpendBarCharts data={data} />
+        </section>
+
+        {/* Row 4: Black Box Table */}
         <section>
           <BlackBoxTable data={data} />
         </section>
 
-        {/* Master Database Table */}
+        {/* Row 5: Master Database Table */}
         <section>
           <MasterTable data={data} />
         </section>
+
       </main>
 
       <footer className="border-t border-border mt-8 py-4">
