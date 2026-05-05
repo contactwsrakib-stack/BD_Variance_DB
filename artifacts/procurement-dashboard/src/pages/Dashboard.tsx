@@ -2,6 +2,7 @@ import { useProcurementData } from "../hooks/useProcurementData";
 import KpiCards from "../components/KpiCards";
 import OriginDonut from "../components/OriginDonut";
 import SpendBarCharts from "../components/SpendBarCharts";
+import MinistryChart from "../components/MinistryChart";
 import BlackBoxTable from "../components/BlackBoxTable";
 import MasterTable from "../components/MasterTable";
 import { Loader2, AlertCircle, Activity } from "lucide-react";
@@ -90,7 +91,12 @@ export default function Dashboard() {
           <SpendBarCharts data={data} />
         </section>
 
-        {/* Row 4: Black Box Table */}
+        {/* Row 4: Ministry Breakdown */}
+        <section>
+          <MinistryChart data={data} />
+        </section>
+
+        {/* Row 5: Black Box Table */}
         <section>
           <BlackBoxTable data={data} />
         </section>
