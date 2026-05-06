@@ -194,6 +194,7 @@ export default function MinistryChart({ data }: Props) {
                 fill="#3b82f6"
                 fillOpacity={0.85}
                 radius={[3, 3, 0, 0]}
+                minPointSize={5}
               />
               <Bar
                 dataKey="revised"
@@ -201,6 +202,7 @@ export default function MinistryChart({ data }: Props) {
                 fill="#ef4444"
                 fillOpacity={0.85}
                 radius={[3, 3, 0, 0]}
+                minPointSize={5}
               />
             </BarChart>
           </ResponsiveContainer>

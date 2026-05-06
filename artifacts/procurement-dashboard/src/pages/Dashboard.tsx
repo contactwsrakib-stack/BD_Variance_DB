@@ -3,6 +3,8 @@ import KpiCards from "../components/KpiCards";
 import OriginDonut from "../components/OriginDonut";
 import SpendBarCharts from "../components/SpendBarCharts";
 import MinistryChart from "../components/MinistryChart";
+import RiskScatter from "../components/RiskScatter";
+import WorstOffenders from "../components/WorstOffenders";
 import BlackBoxTable from "../components/BlackBoxTable";
 import MasterTable from "../components/MasterTable";
 import { Loader2, AlertCircle, Activity } from "lucide-react";
@@ -96,7 +98,13 @@ export default function Dashboard() {
           <MinistryChart data={data} />
         </section>
 
-        {/* Row 5: Black Box Table */}
+        {/* Row 5: Risk Scatter + Worst Offenders side by side */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <RiskScatter data={data} />
+          <WorstOffenders data={data} />
+        </section>
+
+        {/* Row 6: Black Box Table */}
         <section>
           <BlackBoxTable data={data} />
         </section>

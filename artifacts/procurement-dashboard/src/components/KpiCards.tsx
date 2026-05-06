@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { ProcurementRow, parseValue, formatBDT } from "../hooks/useProcurementData";
-import { TrendingUp, DollarSign, Crown } from "lucide-react";
+import { TrendingUp, DollarSign, Crown, Clock } from "lucide-react";
 
 interface Props {
   data: ProcurementRow[];
@@ -31,8 +31,22 @@ export default function KpiCards({ data }: Props) {
     }, data[0]);
   }, [data]);
 
+  const avgDelay = useMemo(() => {
+    const revised = data.filter((row) => {
+      const revYear = Number(row.Revision_Year?.trim());
+      const origYear = Number(row.Original_Award_Year?.trim());
+      const revVal = parseValue(row.Revised_Value_BDT);
+      return revVal > 0 && !isNaN(revYear) && revYear > 0 && !isNaN(origYear) && origYear > 0;
+    });
+    if (!revised.length) return null;
+    const totalDelay = revised.reduce((sum, row) => {
+      return sum + (Number(row.Revision_Year) - Number(row.Original_Award_Year));
+    }, 0);
+    return { avg: totalDelay / revised.length, count: revised.length };
+  }, [data]);
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
       {/* Total Original Spend */}
       <div className="rounded-xl border border-blue-500/20 bg-card p-6 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent pointer-events-none" />
@@ -44,7 +58,7 @@ export default function KpiCards({ data }: Props) {
             <DollarSign className="w-4 h-4 text-blue-400" />
           </div>
         </div>
-        <p className="text-3xl font-bold text-foreground leading-tight">
+        <p className="text-2xl font-bold text-foreground leading-tight">
           {formatBDT(totalOriginal)}
         </p>
         <p className="text-xs text-muted-foreground mt-2">
@@ -63,7 +77,7 @@ export default function KpiCards({ data }: Props) {
             <TrendingUp className="w-4 h-4 text-red-400" />
           </div>
         </div>
-        <p className="text-3xl font-bold text-foreground leading-tight">
+        <p className="text-2xl font-bold text-foreground leading-tight">
           {formatBDT(totalRevised)}
         </p>
         <div className="flex items-center gap-1.5 mt-2">
@@ -93,24 +107,24 @@ export default function KpiCards({ data }: Props) {
             </p>
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground w-16 flex-shrink-0">Original</span>
+                <span className="text-xs text-muted-foreground w-14 flex-shrink-0">Original</span>
                 <span className="text-xs font-semibold text-blue-400">
                   {formatBDT(parseValue(megaProject.Original_Value_BDT))}
                 </span>
                 {megaProject.Original_Award_Year && (
                   <span className="text-xs text-muted-foreground">
-                    in {megaProject.Original_Award_Year}
+                    {megaProject.Original_Award_Year}
                   </span>
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground w-16 flex-shrink-0">Revised</span>
+                <span className="text-xs text-muted-foreground w-14 flex-shrink-0">Revised</span>
                 <span className="text-xs font-bold text-amber-400">
                   {formatBDT(parseValue(megaProject.Revised_Value_BDT))}
                 </span>
                 {megaProject.Revision_Year && (
                   <span className="text-xs text-muted-foreground">
-                    in {megaProject.Revision_Year}
+                    {megaProject.Revision_Year}
                   </span>
                 )}
               </div>
@@ -118,6 +132,32 @@ export default function KpiCards({ data }: Props) {
           </>
         ) : (
           <p className="text-sm text-muted-foreground">No data available</p>
+        )}
+      </div>
+
+      {/* Average Time-to-Revision */}
+      <div className="rounded-xl border border-purple-500/20 bg-card p-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent pointer-events-none" />
+        <div className="flex items-start justify-between mb-3">
+          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            Avg Time-to-Revision
+          </p>
+          <div className="w-9 h-9 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center flex-shrink-0">
+            <Clock className="w-4 h-4 text-purple-400" />
+          </div>
+        </div>
+
+        {avgDelay ? (
+          <>
+            <p className="text-2xl font-bold text-purple-400 leading-tight">
+              {avgDelay.avg.toFixed(1)} yrs
+            </p>
+            <p className="text-xs text-muted-foreground mt-2">
+              Average delay across {avgDelay.count} revised contracts
+            </p>
+          </>
+        ) : (
+          <p className="text-sm text-muted-foreground">No revision data</p>
         )}
       </div>
     </div>
